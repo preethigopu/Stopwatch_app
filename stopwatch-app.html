@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stopwatch App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    .stopwatch {
+      text-align: center;
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .time {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .buttons button {
+      padding: 0.5rem 1rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+    }
+    .laps {
+      margin-top: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <!--  Create an interactive and user-friendly stopwatch web application.
+Implement functions for starting, pausing, and resetting the stopwatch, as well as tracking and displaying lap times, users can accurately measure and record time intervals. -->
+  <div class="stopwatch">
+    <div class="time" id="display">00:00:00.000</div>
+    <div class="buttons">
+      <button onclick="startStopwatch()">Start</button>
+      <button onclick="pauseStopwatch()">Pause</button>
+      <button onclick="resetStopwatch()">Reset</button>
+      <button onclick="recordLap()">Lap</button>
+    </div>
+    <div class="laps" id="laps"></div>
+  </div>
+
+  <script>
+    let startTime = null;
+    let elapsedTime = 0;
+    let timerInterval = null;
+
+    function formatTime(ms) {
+      let date = new Date(ms);
+      let minutes = String(date.getUTCMinutes()).padStart(2, '0');
+      let seconds = String(date.getUTCSeconds()).padStart(2, '0');
+      let milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+      return `${minutes}:${seconds}.${milliseconds}`;
+    }
+
+    function updateDisplay() {
+      document.getElementById('display').textContent = formatTime(elapsedTime);
+    }
+
+    function startStopwatch() {
+      if (!timerInterval) {
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(() => {
+          elapsedTime = Date.now() - startTime;
+          updateDisplay();
+        }, 10);
+      }
+    }
+
+    function pauseStopwatch() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function resetStopwatch() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      elapsedTime = 0;
+      updateDisplay();
+      document.getElementById('laps').innerHTML = '';
+    }
+
+    function recordLap() {
+      if (elapsedTime === 0) return;
+      const lapTime = formatTime(elapsedTime);
+      const lapList = document.getElementById('laps');
+      const lapItem = document.createElement('div');
+      lapItem.textContent = `Lap ${lapList.children.length + 1}: ${lapTime}`;
+      lapList.appendChild(lapItem);
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>
